@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discount</title>
+  <style>
+    body {
+      background-image: url('app.jpg');
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+      font-family: Arial, sans-serif;
+    }
+    div {
+      margin: 20%;
+      margin-top: 5%;
+      margin-bottom: 0px;
+    }
+    input, select {
+      padding: 10px;
+      width: 500px;
+      margin-top: 5px;
+    }
+    select {
+      width: 525px;
+    }
+    td {
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: bolder;
+      font-size: x-large;
+    }
+    button {
+      background-color: rgb(146, 69, 218);
+      padding: 10px;
+      width: 150px;
+      color: white;
+      border: none;
+    }
+    button:hover {
+      cursor: pointer;
+    }
+    label {
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="text-align: center; color: red;">Add Discount</h1>
+  <div>
+    <form id="discountForm" action="add_discount.php" method="POST">
+      <table>
+        <tr>
+          <td><label for="discountName">Discount Name</label></td>
+          <td><input type="text" id="discountName" name="discountName" required /></td>
+        </tr>
+        <tr>
+          <td><label for="discountType">Discount Type</label></td>
+          <td>
+            <select id="discountType" name="discountType" required>
+              <option value="Percentage">Percentage</option>
+              <option value="Flat">Flat</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td><label for="discountValue">Discount Value</label></td>
+          <td><input type="text" id="discountValue" name="discountValue" required /></td>
+        </tr>
+        <tr>
+          <td><label for="startDate">Start Date</label></td>
+          <td><input type="date" id="startDate" name="startDate" required /></td>
+        </tr>
+        <tr>
+          <td><label for="endDate">End Date</label></td>
+          <td><input type="date" id="endDate" name="endDate" required /></td>
+        </tr>
+        <tr>
+          <td><label for="products">Applicable Products (comma separated)</label></td>
+          <td><input type="text" id="products" name="products" required /></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><button type="submit">Add Discount</button></td>
+        </tr>
+      </table>
+    </form>
+    <br />
+    <a href="feedback.html" style="color:white;">Feedback</a>
+  </div>
+  <script>
+navigator.serviceWorker.register('/sw.js').then(reg => {
+  return reg.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: "BKaW6Jlt2OD-8UNwXq_zxsP4f7zmb6JGFHxKnoEohfqAbnAB_ya--HxEmiBBv0722jDngJic1XnlUjC2y8U6cgI"
+  });
+}).then(subscription => {
+  // Send subscription to backend
+  fetch('/save_subscription.php', {
+    method: 'POST',
+    body: JSON.stringify(subscription),
+    headers: { 'Content-Type': 'application/json' }
+  });
+});
+</script>
+</body>
+</html>

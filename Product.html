@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Product</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      background-color: #0078d7;
+      color: white;
+      padding: 15px;
+      margin: 0;
+    }
+
+    .product-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+      padding: 30px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: 0.3s;
+      text-align: center;
+    }
+
+    .product-card:hover {
+      transform: scale(1.03);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 15px;
+    }
+
+    .product-info h3 {
+      font-size: 1.1em;
+      margin: 8px 0;
+    }
+
+    .price {
+      color: #0078d7;
+      font-weight: bold;
+    }
+
+    .view-btn {
+      display: inline-block;
+      margin-top: 10px;
+      background-color: #0078d7;
+      color: white;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: background 0.3s;
+    }
+
+    .view-btn:hover {
+      background-color: #005fa3;
+    }
+
+    /* Modal (popup) */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      top: 8px; right: 12px;
+      font-size: 22px;
+      cursor: pointer;
+      color: #333;
+    }
+
+    .modal-content img {
+      width: 100%;
+      border-radius: 10px;
+      height: 220px;
+      object-fit: cover;
+    }
+
+    @media (max-width: 600px) {
+      .product-card img {
+        height: 150px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🛍️ Product</h1>
+
+  <div class="product-container" id="productContainer"></div>
+
+  <!-- Modal -->
+  <div id="productModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <img id="modalImage" src="" alt="Product Image">
+      <h3 id="modalTitle"></h3>
+      <p id="modalPrice" class="price"></p>
+      <p id="modalDescription"></p>
+    </div>
+  </div>
+
+  <script>
+    const products = [
+      {name:"Smart LED TV", price:"₹15,999", img:"tv.PNG", desc:"32-inch HD Smart LED TV with voice control."},
+      {name:"Washing Machine", price:"₹19,499", img:"wash.PNG", desc:"Fully automatic front-load washing machine."},
+      {name:"Split AC", price:"₹33,999", img:"ac.PNG", desc:"1.5 Ton inverter split AC for powerful cooling."},
+      {name:"Men’s T-Shirt", price:"₹499", img:"men.PNG", desc:"Cotton round-neck T-shirt, available in all sizes."},
+      {name:"Mixer Grinder", price:"₹2,399", img:"mixer.PNG", desc:"750W power, 3 stainless steel jars included."},
+      {name:"Ceiling Fan", price:"₹1,199", img:"fan.PNG", desc:"Energy-efficient 3-blade ceiling fan, 1200mm."},
+      {name:"Smartwatch", price:"₹3,999", img:"watch.PNG", desc:"Fitness tracker with heart-rate monitor."},
+      {name:"Makeup Kit", price:"₹1,299", img:"makeup.PNG", desc:"Complete makeup kit with brushes and palette."},
+      {name:"LED Bulb Pack", price:"₹399", img:"blub.PNG", desc:"Pack of 6 energy-saving LED bulbs (9W)."},
+      {name:"Women’s Dress", price:"₹1,199", img:"womendress.PNG", desc:"Stylish summer dress for women."},
+      {name:"Grooming Kit", price:"₹1,899", img:"grooming.PNG", desc:"All-in-one beard and hair trimmer set."},
+      {name:"Analog Watch", price:"₹2,299", img:"analog watch.PNG", desc:"Leather strap analog wristwatch."},
+      {name:"Floor Lamp", price:"₹1,499", img:"floorlamp.PNG", desc:"Modern floor lamp with warm white light."},
+      {name:"Wireless Earbuds", price:"₹2,999", img:"ear.PNG", desc:"Bluetooth earbuds with charging case."},
+      {name:"Backpack", price:"₹999", img:"backpac.PNG", desc:"20L waterproof laptop backpack."},
+      {name:"Electric Kettle", price:"₹899", img:"eletrickettle.PNG", desc:"1.8L electric kettle with auto shutoff."},
+      {name:"Perfume", price:"₹1,699", img:"perfume.PNG", desc:"Long-lasting unisex perfume (100ml)."},
+      {name:"Table Lamp", price:"₹799", img:"tablelamp.PNG", desc:"Touch control desk lamp with adjustable brightness."},
+      {name:"Bluetooth Speaker", price:"₹2,199", img:"speaker.PNG", desc:"Portable speaker with deep bass."},
+      {name:"Sunglasses", price:"₹899", img:"sunglass.PNG", desc:"UV-protected stylish sunglasses."}
+    ];
+
+    const container = document.getElementById("productContainer");
+    const modal = document.getElementById("productModal");
+    const modalImg = document.getElementById("modalImage");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalPrice = document.getElementById("modalPrice");
+    const modalDesc = document.getElementById("modalDescription");
+    const closeBtn = document.querySelector(".close");
+
+    // Create product cards
+    products.forEach((p, i) => {
+      const card = document.createElement("div");
+      card.classList.add("product-card");
+      card.innerHTML = `
+        <img src="${p.img}" alt="${p.name}">
+        <div class="product-info">
+          <h3>${p.name}</h3>
+          <p class="price">${p.price}</p>
+          <button class="view-btn" data-index="${i}">View Details</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    // Show modal on "View Details"
+    document.querySelectorAll(".view-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const index = e.target.dataset.index;
+        const p = products[index];
+        modalImg.src = p.img;
+        modalTitle.textContent = p.name;
+        modalPrice.textContent = p.price;
+        modalDesc.textContent = p.desc;
+        modal.style.display = "flex";
+      });
+    });
+
+    // Close modal
+    closeBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
+
+    window.addEventListener("click", (e) => {
+      if (e.target === modal) modal.style.display = "none";
+    });
+  </script>
+</body>
+</html>

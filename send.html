@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Send Notification Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 2rem; }
+    button { padding: 0.6rem 1rem; font-size: 1rem; cursor: pointer; }
+    .status { margin-top: 1rem; color: #444; }
+  </style>
+</head>
+<body>
+  <h1>Send a browser notification</h1>
+
+  <button id="enable">Enable notifications</button>
+  <button id="notify" disabled>Send notification</button>
+
+  <p class="status" id="status">Notifications not enabled yet.</p>
+
+  <script>
+    const enableBtn = document.getElementById('enable');
+    const notifyBtn = document.getElementById('notify');
+    const statusEl = document.getElementById('status');
+
+    // Update UI based on permission
+    function updateStatus() {
+      const perm = Notification.permission;
+      statusEl.textContent = `Permission: ${perm}`;
+      notifyBtn.disabled = perm !== 'granted';
+    }
+    updateStatus();
+
+    // Ask for permission on click
+    enableBtn.addEventListener('click', async () => {
+      if (!('Notification' in window)) {
+        alert('Notifications are not supported in this browser.');
+        return;
+      }
+      try {
+        const result = await Notification.requestPermission();
+        updateStatus();
+        if (result === 'granted') {
+          // Optional: show a welcome notification
+          new Notification('Notifications enabled', {
+            body: 'You can now receive alerts.',
+            icon: 'https://via.placeholder.com/128' // replace with your icon
+          });
+        }
+      } catch (e) {
+        console.error('Permission request failed:', e);
+      }
+    });
+
+    // Send a notification
+    notifyBtn.addEventListener('click', () => {
+      // Simple foreground notification (tab must be open)
+      new Notification('Hello from this page!', {
+        body: 'This is your test notification.',
+        tag: 'demo',         // prevents stacking duplicates
+        renotify: true,      // re-alert if same tag is used
+        icon: 'https://via.placeholder.com/128' // replace with your icon
+      });
+    });
+  </script>
+</body>
+</html>
